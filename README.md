@@ -17,6 +17,7 @@ Using [Lazy.nvim](https://github.com/folke/lazy.nvim):
 ```lua
 {
   "yuri-rage/nvim-keybind-tracker",
+  event = "VeryLazy",
   config = function()
     require("keybind-tracker").setup({
       -- optional settings (these are the defaults)
@@ -40,6 +41,7 @@ I use the following `.config/nvim/lua/plugins/keybinds.lua` file with Lazy.nvim:
 ```lua
 return {
     "yuri-rage/nvim-keybind-tracker",
+    event = "VeryLazy",
     config = function()
         require("keybind-tracker").setup({})
         local map = require("keybind-tracker").map
