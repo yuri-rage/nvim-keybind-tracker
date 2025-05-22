@@ -10,6 +10,8 @@ Map keybindings and track them for display in a floating window (so you don't fo
 * Dynamically updates as keybindings are registered
 * Simple API: wrap your mappings using `map()` to track them
 
+> NOTE: Use this plugin's `map()` function instead of `vim.keymap.set()`
+
 ## Installation
 
 Using [Lazy.nvim](https://github.com/folke/lazy.nvim):
