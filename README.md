@@ -48,30 +48,47 @@ return {
         require("keybind-tracker").setup({})
         local map = require("keybind-tracker").map
 
-        -- Tab navigation
-        map("n", "H", "gT", { desc = "gT (previous tab)" })
-        map("n", "L", "gt", { desc = "gt (next tab)" })
+        vim.keymap.set("n", "Q", "<nop>") -- disable Ex mode (untracked by keybind-tracker)
+
+        -- motions
+        map("n", "<C-u>", "<C-d>zz", { desc = "PgUp + center cursor" })
+        map("n", "<C-d>", "<C-d>zz", { desc = "PgDn + center cursor" })
+        map("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move visual block up" })
+        map("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move visual block down" })
+
+        -- substitution
+        map(
+            "n",
+            "<leader>s",
+            [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]],
+            { desc = "Global replace word under cursor", group = "Substitution" }
+        )
+
+        --clipboard
+        map({ "n", "v" }, "<leader>y", [["+y]], { desc = "Yank (to system clipboard)", group = "Clipboard" })
+        map("n", "<leader>Y", [["+Y]], { desc = "Yank to EOL (system clipboard)", group = "Clipboard" })
+        map({ "n", "v" }, "<leader>d", '"_d', { desc = "Delete (no yank)", group = "Clipboard" })
+        map("x", "<leader>p", [["_dP]], { desc = "Paste (no yank)", group = "Clipboard" })
 
         -- Neo-tree
-        map("n", "<C-n>", ":Neotree filesystem toggle left<CR>", { desc = "Toggle Neotree" })
+        map("n", "<C-n>", ":Neotree filesystem toggle left<CR>", { desc = "Toggle Neotree", group = "Filesystem" })
 
         -- Telescope
         local builtin = require("telescope.builtin")
-        map("n", "<C-p>", builtin.find_files, { desc = "Find files (Telescope)" })
-        map("n", "<leader>fg", builtin.live_grep, { desc = "Live grep" })
+        map("n", "<C-p>", builtin.find_files, { desc = "Find files (Telescope)", group = "Filesystem" })
+        map("n", "<leader>fg", builtin.live_grep, { desc = "Live grep", group = "Filesystem" })
 
         -- LSP
-        map("n", "K", vim.lsp.buf.hover, { desc = "Inspect symbol under cursor (LSP hover)" })
-        map("n", "<leader>gd", vim.lsp.buf.definition, { desc = "Go to definition" })
-        map("n", "<leader>gr", vim.lsp.buf.references, { desc = "Find references" })
-        map("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code action" })
-        map("n", "<leader>gf", vim.lsp.buf.format, { desc = "Format file" })
+        map("n", "<leader>gf", vim.lsp.buf.format, { desc = "Format file", group = "LSP" })
+        map("n", "<leader>gd", vim.lsp.buf.definition, { desc = "Go to definition", group = "LSP" })
+        map("n", "<leader>gr", vim.lsp.buf.references, { desc = "Find references", group = "LSP" })
+        map("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code action", group = "LSP" })
+        map("n", "K", vim.lsp.buf.hover, { desc = "Inspect symbol under cursor", group = "LSP" })
 
         -- Gitsigns
-        map("n", "<leader>gp", ":Gitsigns preview_hunk<CR>", { desc = "Git: preview hunk" })
-        map("n", "<leader>gt", ":Gitsigns toggle_current_line_blame<CR>", { desc = "Git: toggle blame" })
+        map("n", "<leader>gp", ":Gitsigns preview_hunk<CR>", { desc = "Git: preview hunk", group = "Git" })
+        map("n", "<leader>gt", ":Gitsigns toggle_current_line_blame<CR>", { desc = "Git: toggle blame", group = "Git" })
     end,
-}
 ```
 
 ## Pro Tip: Map Caps Lock to ESC
