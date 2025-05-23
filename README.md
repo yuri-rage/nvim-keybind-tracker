@@ -73,3 +73,83 @@ return {
     end,
 }
 ```
+
+## Pro Tip: Map Caps Lock to ESC
+
+### Using QMK Keyboard Firmware
+
+If you have a Keychron or other QMK keyboard, you can use the mod-tap feature of QMK to map Caps Lock to ESC on tap and CTRL on hold.
+
+Follow [these instructions](https://federico.is/posts/2023/11/01/remapping-caps-lock-on-keychron-keyboard/).
+
+If VIA does not readily connect to a Keychron keyboard, [follow these instructions](https://www.keychron.com/blogs/archived/how-to-use-via-to-program-your-keyboard) to download the JSON file and connect (was required for the Keychron Q5 Max).
+
+### Using caps2esc at the OS (user) level
+
+To use Caps Lock as ESC (and CTRL on hold) on Arch Linux + Wayland, follow these instructions.
+
+Install interception-tools and the caps2esc plugin:
+
+```bash
+yay -S interception-tools interception-caps2esc  # or use pacman
+mkdir -p ~/.config/interception
+nvim ~/.config/interception/udevmon.yaml
+```
+
+Paste:
+```yaml
+- JOB: "intercept -g $DEVNODE | caps2esc | uinput -d $DEVNODE"
+  DEVICE:
+    EVENTS:
+      EV_KEY: [KEY_CAPSLOCK, KEY_LEFTCTRL]
+```
+
+Create a user level systemd service:
+
+
+```bash
+mkdir -p ~/.config/systemd/user
+nvim ~/.config/systemd/user/caps2esc.service
+```
+
+Paste:
+```ini
+[Unit]
+Description=Intercept Caps Lock: Escape on tap, Ctrl on hold
+After=graphical-session.target
+
+[Service]
+ExecStart=/usr/bin/udevmon -c %h/.config/interception/udevmon.yaml
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
+```
+
+Enable the service:
+
+```bash
+systemctl --user daemon-reexec
+systemctl --user daemon-reload
+systemctl --user enable --now caps2esc.service
+```
+
+You'll probably see permission errors if you issue `systemctl --user status caps2esc.service`.
+
+Fix that with:
+
+```bash
+sudo usermod -aG input $USER
+sudo modprobe uinput
+sudo nvim /etc/udev/rules.d/99-uinput.rules
+
+```
+
+Paste:
+
+```ini
+# /etc/udev/rules.d/99-uinput.rules
+KERNEL=="uinput", SUBSYSTEM=="misc", MODE:="0660", GROUP:="input"
+```
+
+Reboot, and you should be able to use Caps Lock as Escape (and vice versa).
