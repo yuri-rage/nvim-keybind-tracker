@@ -51,7 +51,7 @@ return {
         vim.keymap.set("n", "Q", "<nop>") -- disable Ex mode (untracked by keybind-tracker)
 
         -- motions
-        map("n", "<C-u>", "<C-d>zz", { desc = "PgUp + center cursor" })
+        map("n", "<C-u>", "<C-u>zz", { desc = "PgUp + center cursor" })
         map("n", "<C-d>", "<C-d>zz", { desc = "PgDn + center cursor" })
         map("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move visual block up" })
         map("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move visual block down" })
